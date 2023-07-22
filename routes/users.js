@@ -12,14 +12,14 @@ route.post('/register', async(req, res) => {
         //res.send(foundName.rows[0]);
 
         if (foundName.rows[0] != null) {
-            res.send("Username already taken.")
+            res.send("Username already taken.");
         }
         else {
             const password = req.body.password;
             const salt = await bcrypt.genSalt();
             const finalPass = await bcrypt.hash(password, salt);
             await pool.query("INSERT INTO users (username, password) VALUES ($1, $2)", [username, finalPass]);
-            res.send("Register successed.")
+            res.send("Register successed.");
             //tambahin code untuk lgsg redirect ke login page
         }
     } catch (error) {
@@ -40,6 +40,8 @@ route.post('/', async(req, res) => {
         else {
             const valid = await bcrypt.compare(req.body.password, foundName.rows[0].password)
             if(valid == true) {
+                //save user account to session
+                req.session.username = foundName.rows[0].username; //hrs diubah menjadi user id
                 res.send("Login successful.")
             }
             else{
@@ -49,6 +51,12 @@ route.post('/', async(req, res) => {
     } catch (error) {
         console.error(error.message);
     }
+});
+
+//logout
+route.get('/logout', (req, res) => {
+    req.session.username = "";
+    res.send("You have been logged out.");
 })
 
 export default route;
