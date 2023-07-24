@@ -1,15 +1,82 @@
 CREATE DATABASE gatherly;
 
-//users
-CREATE TABLE users (
-    username VARCHAR(100) PRIMARY KEY,
-    password VARCHAR(100)
+CREATE TABLE Users (
+    userID SERIAL PRIMARY KEY,
+    Email VARCHAR(255),
+    Username VARCHAR(100),
+    Password VARCHAR(100)
 );
 
-//events
-CREATE TABLE events (
-    eventName VARCHAR(100) PRIMARY KEY,
-    eventDesc VARCHAR(500),
-    username VARCHAR(100),
-    FOREIGN KEY (username) REFERENCES users(username) ON UPDATE CASCADE ON DELETE CASCADE
+CREATE TABLE Events (
+  eventID SERIAL PRIMARY KEY,
+  userID SERIAL,
+  eventName VARCHAR(100),
+  eventDescription TEXT,
+  FOREIGN KEY (userID) REFERENCES Users(userID) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+CREATE TABLE Members (
+  eventID SERIAL,
+  userID SERIAL,
+  PRIMARY KEY (eventID, userID),
+  FOREIGN KEY (eventID) REFERENCES Events(eventID) ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY (userID) REFERENCES Users(userID) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE Notes (
+  eventID SERIAL,
+  Notes TEXT,
+  FOREIGN KEY (eventID) REFERENCES Events(eventID) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE KeyResources (
+  eventID SERIAL,
+  linkName VARCHAR(100),
+  Link TEXT,
+  FOREIGN KEY (eventID) REFERENCES Events(eventID) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE Section (
+  eventID SERIAL,
+  SectionID SERIAL PRIMARY KEY,
+  sectionName VARCHAR(100),
+  FOREIGN KEY (eventID) REFERENCES Events(eventID) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE Task (
+  SectionID SERIAL,
+  TaskID SERIAL PRIMARY KEY,
+  taskName VARCHAR(100),
+  taskDueDate DATE,
+  taskPriority VARCHAR(50),
+  taskPIC VARCHAR(100),
+  taskDesc TEXT,
+  FOREIGN KEY (SectionID) REFERENCES Section(SectionID) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE BudgetPlan (
+  eventID SERIAL,
+  Category VARCHAR(50) PRIMARY KEY,
+  Nominal DECIMAL(10, 3),
+  FOREIGN KEY (eventID) REFERENCES Events(eventID) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE BudgetHistory (
+  eventID SERIAL,
+  Title VARCHAR(100),
+  Category VARCHAR(50),
+  Nominal DECIMAL(10, 2),
+  Expensedate DATE,
+  FOREIGN KEY (eventID) REFERENCES Events(eventID) ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY (Category) REFERENCES BudgetPlan(Category) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+DROP TABLE users;
+DROP TABLE events;
+DROP TABLE members;
+DROP TABLE notes;
+DROP TABLE KeyResources;
+DROP TABLE Section;
+DROP TABLE Task;
+DROP TABLE BudgetPlan;
+DROP TABLE BudgetHistory;

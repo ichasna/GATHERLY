@@ -6,7 +6,7 @@ const route = express.Router();
 //create event
 route.post('/', async(req, res) => {
     try {
-        const username = req.session.username;
+        const userid = req.session.userid;
         const eventName = req.body.eventName;
         const foundName = await pool.query("SELECT eventName FROM events WHERE eventName = $1", [eventName]);
         //res.send(foundName.rows[0]);
@@ -16,7 +16,7 @@ route.post('/', async(req, res) => {
         }
         else {
             const eventDesc = req.body.eventDesc;
-            await pool.query("INSERT INTO events (username, eventName, eventDesc) VALUES ($1, $2, $3)", [username, eventName, eventDesc]);
+            await pool.query("INSERT INTO events (userid, eventName, eventDescription) VALUES ($1, $2, $3)", [userid, eventName, eventDesc]);
             res.send(`Event ${eventName} has been created.`);
             //harusnya nambahin code untuk redirect ke dashboard event
         }
@@ -28,8 +28,8 @@ route.post('/', async(req, res) => {
 //list of event
 route.get('/', async(req,res) => {
     try {
-        const username = req.session.username;
-        const events = await pool.query("SELECT eventName FROM events WHERE username = $1", [username]);
+        const userid = req.session.userid;
+        const events = await pool.query("SELECT eventName FROM events WHERE userid = $1", [userid]);
         res.send(events.rows);
     } catch (error) {
         console.error(error.message);
