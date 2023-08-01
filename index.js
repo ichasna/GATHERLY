@@ -22,7 +22,7 @@ app.get('/', (req,res) => {
     res.send('berhasil!');
 });
 app.use('/users', authRouter);
-app.use('/createevent', eventRouter);
+app.use('/events', eventRouter);
 
 app.listen(PORT, () => {
     console.log(`Server running on port: http://localhost:${PORT}`);

@@ -71,12 +71,12 @@ CREATE TABLE BudgetHistory (
   FOREIGN KEY (Category) REFERENCES BudgetPlan(Category) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-DROP TABLE users;
-DROP TABLE events;
-DROP TABLE members;
-DROP TABLE notes;
-DROP TABLE KeyResources;
-DROP TABLE Section;
-DROP TABLE Task;
-DROP TABLE BudgetPlan;
 DROP TABLE BudgetHistory;
+DROP TABLE BudgetPlan;
+DROP TABLE Task;
+DROP TABLE Section;
+DROP TABLE KeyResources;
+DROP TABLE notes;
+DROP TABLE members;
+DROP TABLE events;
+DROP TABLE users;

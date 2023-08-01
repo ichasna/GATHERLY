@@ -1,6 +1,6 @@
 import express from "express";
 import bcrypt from "bcrypt";
-import pool from "/Users/syarifah/Documents/GATHERLY/db.js"; //ini hrs diubah
+import supabase from "../supabase.js";
 
 const route = express.Router();
 
@@ -8,17 +8,17 @@ const route = express.Router();
 route.post('/register', async(req, res) => {
     try {
         const username = req.body.username;
-        const foundName = await pool.query("SELECT username FROM users WHERE username = $1", [username]);
-        //res.send(foundName.rows[0]);
+        const foundName = await supabase.from('users').select('username').eq('username', username);
+        //res.send(foundName.data[0]);
 
-        if (foundName.rows[0] != null) {
+        if (foundName.data[0] != null) {
             res.send("Username already taken.");
         }
         else {
             const password = req.body.password;
             const salt = await bcrypt.genSalt();
             const finalPass = await bcrypt.hash(password, salt);
-            await pool.query("INSERT INTO users (email, username, password) VALUES ($1, $2, $3)", [req.body.email, username, finalPass]);
+            await supabase.from('users').insert([{ email: req.body.email, username: username, password: finalPass }]).select();
             res.send("Register successed.");
             //tambahin code untuk lgsg redirect ke login page
         }
@@ -31,17 +31,17 @@ route.post('/register', async(req, res) => {
 route.post('/', async(req, res) => {
     try {
         const username = req.body.username;
-        const foundName = await pool.query("SELECT * FROM users WHERE username = $1", [username]);
-        //res.send(foundName.rows[0].password);
+        const foundName = await supabase.from('users').select('*').eq('username', username);
+        //res.send(foundName.data[0]);
 
-        if(foundName.rows[0] == null) {
+        if(foundName.data[0] == null) {
             res.send("Cannot find user.")
         }
         else {
-            const valid = await bcrypt.compare(req.body.password, foundName.rows[0].password)
+            const valid = await bcrypt.compare(req.body.password, foundName.data[0].password)
             if(valid == true) {
                 //save user account to session
-                req.session.userid = foundName.rows[0].userid; //hrs diubah menjadi user id
+                req.session.userid = foundName.data[0].userid; 
                 res.send("Login successful.")
             }
             else{

@@ -1,3 +1,5 @@
+//file ini hanya untuk integrate BE ke DB local
+
 //import pool dari library pg
 import pkg from "pg";
 
