@@ -62,17 +62,22 @@ route.get('/:id', async(req,res) => {
 //add members to event
 route.post('/addmember', async(req,res) => {
     try {
-        const username = req.body.username;
-        const foundName = await supabase.from('users').select('userid').eq('username', username);
-        if (foundName.data[0] == null) {
-            res.send("Cannot find user with that username.");
+        const all_username = req.body.username;
+        for (let i = 0 ; i<all_username.length ; i++) {
+            //console.log(all_username[i]);
+            const foundName = await supabase.from('users').select('userid').eq('username', all_username[i]);
+            if (foundName.data[0] == null) {
+                res.send("Cannot find user with that username.");
+            }
+            else {
+                const memberID = foundName.data[0].userid;
+                const eventID = req.body.eventid;
+                await supabase.from('members').insert([{eventid: eventID, userid: memberID}]).select();
+                //res.send(`User ${username} has been added to members.`);
+                console.log(`User ${all_username[i]} has been added to members.`);
+            }
         }
-        else {
-            const memberID = foundName.data[0].userid;
-            const eventID = req.body.eventid;
-            await supabase.from('members').insert([{eventid: eventID, userid: memberID}]).select();
-            res.send(`User ${username} has been added to members.`);
-        }
+        res.send("Invite new members successed.")
     } catch (error) {
         console.error(error.message);
     }
