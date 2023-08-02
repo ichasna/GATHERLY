@@ -37,73 +37,24 @@ route.get('/', async(req,res) => {
 });
 
 //delete a event
-route.post('/delevent', async(req,res) => {
+route.delete('/delevent/:id', async(req,res) => {
     try {
-        const eventid = req.body.eventid;
-        await supabase.from('events').delete().eq('eventid', eventid);
+        const { id } = req.params;
+        await supabase.from('events').delete().eq('eventid', id);
         res.send("delete event successed.")
     } catch (error) {
         console.error(error.message);
     }
 });
 
-//get in to a event (belom kelar)
+//get in to a event
 //butuh atau ngga?
 route.get('/:id', async(req,res) => {
     try {
-        const { eventid } = req.params;
-        req.session.eventid = eventid;
-        res.send(req.session.eventid);
-    } catch (error) {
-        console.error(error.message);
-    }
-});
-
-//add members to event
-route.post('/addmember', async(req,res) => {
-    try {
-        const all_username = req.body.username;
-        for (let i = 0 ; i<all_username.length ; i++) {
-            //console.log(all_username[i]);
-            const foundName = await supabase.from('users').select('userid').eq('username', all_username[i]);
-            if (foundName.data[0] == null) {
-                res.send("Cannot find user with that username.");
-            }
-            else {
-                const memberID = foundName.data[0].userid;
-                const eventID = req.body.eventid;
-                await supabase.from('members').insert([{eventid: eventID, userid: memberID}]).select();
-                //res.send(`User ${username} has been added to members.`);
-                console.log(`User ${all_username[i]} has been added to members.`);
-            }
-        }
-        res.send("Invite new members successed.")
-    } catch (error) {
-        console.error(error.message);
-    }
-});
-
-//get list of members (belom kelar)
-route.post('/listmember', async(req,res) => {
-    try {
-        const eventid = req.body.eventid;
-        const members = await supabase
-        .from('users')
-        .select('username')
-        .in('userid', supabase.from('members').select('userid').eq('eventid', eventid).then(data => data.map(item => item.userID)));
-        res.send(members.data);
-    } catch (error) {
-        console.error(error.message);
-    }
-});
-
-//delete member
-route.post('/delmember', async(req,res) => {
-    try {
-        const eventid = req.body.eventid;
-        const memberid = req.body.userid;
-        await supabase.from('members').delete().eq('eventid', eventid).eq('userid', memberid);
-        res.send("delete member successed.")
+        const { id } = req.params;
+        req.session.eventid = id;
+        //console.log(id);
+        res.send('berhasil');
     } catch (error) {
         console.error(error.message);
     }

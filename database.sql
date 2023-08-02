@@ -24,12 +24,14 @@ CREATE TABLE Members (
 );
 
 CREATE TABLE Notes (
+  noteID SERIAL PRIMARY KEY,
   eventID SERIAL,
   Notes TEXT,
   FOREIGN KEY (eventID) REFERENCES Events(eventID) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE KeyResources (
+  rlinkID SERIAL PRIMARY KEY,
   eventID SERIAL,
   linkName VARCHAR(100),
   Link TEXT,
