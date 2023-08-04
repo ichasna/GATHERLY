@@ -47,13 +47,24 @@ route.delete('/delevent/:id', async(req,res) => {
     }
 });
 
-//get in to a event
-//butuh atau ngga?
-route.get('/:id', async(req,res) => {
+//get event name and event description
+route.get('/infoanevent', async(req, res) => {
     try {
-        const { id } = req.params;
-        req.session.eventid = id;
-        //console.log(id);
+        const id = req.session.eventid;
+        const info = await supabase.from('events').select('eventname, eventdescription').eq('eventid', id);
+        res.send(info.data[0]);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+//get in to a event
+route.get('/:evname', async(req,res) => {
+    try {
+        const { evname } = req.params;
+        const id = await supabase.from('events').select('eventid').eq('eventname', evname);
+        req.session.eventid = id.data[0].eventid;
+        //console.log(id.data[0].eventid);
         res.send('berhasil');
     } catch (error) {
         console.error(error.message);
