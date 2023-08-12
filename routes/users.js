@@ -57,6 +57,16 @@ route.post('/', async(req, res) => {
 route.get('/logout', (req, res) => {
     req.session.userid = null;
     res.send("You have been logged out.");
+});
+
+//get user's infos
+route.get('/', async(req, res) => {
+    const userid = req.session.userid;
+    const infos = await supabase
+    .from('users')
+    .select('email, username')
+    .eq('userid', userid);
+    res.send(infos.data[0]);
 })
 
 export default route;

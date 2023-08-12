@@ -27,14 +27,20 @@ route.post('/addmember/:eventid', async(req,res) => {
     }
 });
 
-//get list of members (belom kelar)
+//get list of members
 route.get('/', async(req,res) => {
     try {
         const eventid = req.session.eventid
+        const userid = await supabase
+        .from('members')
+        .select('userid')
+        .eq('eventid', eventid);
+        const userids = userid.data.map(item => item.userid);
+        console.log(userids);
         const members = await supabase
         .from('users')
         .select('username')
-        .in('userid', supabase.from('members').select('userid').eq('eventid', eventid).then(data => data.map(item => item.userID)));
+        .in('userid', userids);
         res.send(members.data);
     } catch (error) {
         console.error(error.message);
