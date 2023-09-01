@@ -47,17 +47,18 @@ route.put('/edit/:taskid', async(req, res) => {
 // Add section
 route.post('/add-section', async (req, res) => {
     try {
-        const sectionName = req.body.sectionName; // Get the section name from the request body
+        const eventid = req.session.eventid;
+        const sectionname = req.body.sectionname; // Get the section name from the request body
 
-        const { data, error } = await supabase.from('Section')
-            .insert([{ sectionName: sectionName }])
+        const { data, error } = await supabase.from('section')
+            .insert([{sectionname: sectionname, eventid: eventid}])
             .select(); // Insert the new section into the Section table
 
         if (error) {
             throw error;
         }
 
-        res.send(`Section "${sectionName}" has been created with ID ${data[0].SectionID}.`);
+        res.send(`Section "${sectionname}" has been created with ID ${data[0].sectionid}.`);
         
     } catch (error) {
         console.error(error.message);
@@ -69,25 +70,12 @@ route.post('/add-section', async (req, res) => {
 route.get('/section', async(req, res) => {
     const eventid = req.session.eventid;
     const sections = await supabase.from('section').select('sectionid, sectionname').eq('eventid', eventid);
+    for (const section of sections.data) {
+        const tasks = await supabase.from('task').select('*').eq('sectionid', section.sectionid);
+        section['tasks'] = tasks.data
+    }
     res.send(sections.data);
 })
-
-// View list of tasks
-route.get('/tasks', async (req, res) => {
-    try {
-        const { data, error } = await supabase.from('Task')
-            .select('taskID, taskName, taskDueDate, taskPriority, taskPIC, taskDesc'); // Select the required fields
-
-        if (error) {
-            throw error;
-        }
-
-        res.json(data);
-    } catch (error) {
-        console.error(error.message);
-        res.status(500).send('An error occurred while fetching the tasks.');
-    }
-});
 
 // Delete a task
 route.delete('/delete/:taskid', async (req, res) => {
