@@ -4,7 +4,7 @@ import supabase from "../supabase.js";
 const route = express.Router();
 
 //add task
-route.post('/add', async(req, res) => {
+route.post('/add-task', async(req, res) => {
     try {
         const sectionID = req.body.sectionID;
         const taskName = req.body.taskName;
@@ -65,6 +65,13 @@ route.post('/add-section', async (req, res) => {
     }
 });
 
+//get list of section
+route.get('/section', async(req, res) => {
+    const eventid = req.session.eventid;
+    const sections = await supabase.from('section').select('sectionid, sectionname').eq('eventid', eventid);
+    res.send(sections.data);
+})
+
 // View list of tasks
 route.get('/tasks', async (req, res) => {
     try {
@@ -83,7 +90,7 @@ route.get('/tasks', async (req, res) => {
 });
 
 // Delete a task
-route.delete('/delete-task/:taskid', async (req, res) => {
+route.delete('/delete/:taskid', async (req, res) => {
     try {
         const { taskid } = req.params;
 
@@ -105,6 +112,5 @@ route.delete('/delete-task/:taskid', async (req, res) => {
         res.status(500).send('An error occurred while deleting the task.');
     }
 });
-
 
 export default route;

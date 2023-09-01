@@ -6,6 +6,7 @@ import eventRouter from "./routes/events.js";
 import membRouter from "./routes/members.js";
 import noteRouter from "./routes/notes.js";
 import rlinkRouter from "./routes/rlink.js";
+import taskRouter from "./routes/tasks.js";
 
 const app = express();
 const PORT = 5000;
@@ -29,6 +30,7 @@ app.use('/events', eventRouter);
 app.use('/members', membRouter);
 app.use('/notes', noteRouter);
 app.use('/rlink', rlinkRouter);
+app.use('/tasks', taskRouter);
 
 app.listen(PORT, () => {
     console.log(`Server running on port: http://localhost:${PORT}`);
