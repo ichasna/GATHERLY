@@ -66,7 +66,7 @@ route.post('/add-section', async (req, res) => {
     }
 });
 
-//get list of section
+//get list of section and task
 route.get('/section', async(req, res) => {
     const eventid = req.session.eventid;
     const sections = await supabase.from('section').select('sectionid, sectionname').eq('eventid', eventid);
